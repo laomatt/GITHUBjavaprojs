@@ -44,12 +44,7 @@ public class StateInformation extends JFrame{
 
         }
 
-
-
-        System.out.println(SwingUtilities.isEventDispatchThread());
-
-
-        Thread t1 = new Thread(new showgui(state, capital));
+        Thread t1 = new Thread(new showgui(state, capital, data));
 
         t1.start();
 
@@ -67,9 +62,10 @@ class showgui extends JFrame implements Runnable
 {
     ArrayList<String> st;
     ArrayList<String> ca;
-    public showgui(ArrayList sta, ArrayList caa)
+    HashMap data = new HashMap<String, String>();
+    public showgui(ArrayList sta, ArrayList caa, HashMap d)
     {
-
+        data=d;
         st=sta;
         ca=caa;
 
@@ -96,7 +92,7 @@ JFrame jf;
 
 
         JLabel statecap = new JLabel();
-        statecap.setPreferredSize(new Dimension(30,20));
+        statecap.setPreferredSize(new Dimension(30,100));
        // statecap.setAlignmentX(CENTER);
         //statecap.setBackground(Color.red);
 
@@ -112,7 +108,7 @@ JFrame jf;
         textfields.setPreferredSize(new Dimension(200,50));
 
 
-        submitelisten sl = new submitelisten(jtfstate,jtfcapitol,statecap,st,ca);
+        submitelisten sl = new submitelisten(jtfstate,jtfcapitol,statecap,st,ca, data);
 
         JButton sub = new JButton("submit");
         sub.addActionListener(sl);
@@ -140,11 +136,12 @@ class submitelisten implements ActionListener
         JLabel output;// = new JPanel();
         ArrayList<String> state = new ArrayList<>();
         ArrayList<String> capital = new ArrayList<>();
+        HashMap data = new HashMap<String, String>();
 
-
-    public submitelisten(JTextField s, JTextField c, JLabel out, ArrayList st, ArrayList ca)
+    public submitelisten(JTextField s, JTextField c, JLabel out, ArrayList st, ArrayList ca, HashMap da)
     {
 
+        data=da;
         state = st;
         capital = ca;
         jtfstate = s;
@@ -177,12 +174,51 @@ class submitelisten implements ActionListener
                 //see what kind of regex it is
                 if(statefield.contains("^")&&statefield.contains("#")&&statefield.contains("."))
                     {
-                        for(int i=0;i<state.size();i++)
+                        //regex for specified start and end with middle specified
+                        if(statefield.contains("*"))
                         {
-                        //   find
+                            //get string for the start of the search criteria
+                            String inp="";
+                                for(int i=1;i<statefield.indexOf(".");i++)
+                                {
+                                    inp+=statefield.charAt(i);
+
+                                }
+                            //get string for the end of the search criteria
+                            String onp="";
+                                for(int i=statefield.indexOf("*")+1;i<statefield.length();i++)
+                                {
+                                    inp+=statefield.charAt(i);
+
+                                }
+
+                                //now transverse the array list to filter out what starts with inp and ends with onp
+                            for(int i=0;i<state.size();i++)
+                            {
+                                    if (state.get(i).toLowerCase().startsWith(inp.toLowerCase())&&state.get(i).toLowerCase().endsWith(onp.toLowerCase()))
+                                    {
+                                        stateout.add(state.get(i));
+
+                                    }
+
+                            }
+                        }
+                        else
+                        {
+                            int counter=0;
+                            for(int i=0; i<statefield.length;i++)
+                            {
+                                    if(statefield.charAt(i).equalsIgnoreCase("."))
+                                    {
+                                        counter++;
+                                    }
+
+                            }
+
 
                         }
                     }
+                    //regex for specified start or end with middle specified
                 else if((statefield.contains("^")||statefield.contains("#"))&&statefield.contains("."))
                     {
                         for(int i=0;i<state.size();i++)
@@ -211,7 +247,7 @@ class submitelisten implements ActionListener
 
                         for(int i=0;i<state.size();i++)
                         {
-                            if (state.get(i).startsWith(inp,0))
+                            if (state.get(i).toLowerCase().startsWith(inp.toLowerCase()))
                             {
                                 stateout.add(state.get(i));
 
@@ -224,8 +260,20 @@ class submitelisten implements ActionListener
 
                 else if(statefield.contains("#"))
                     {
+                        String inp="";
+                        for(int i=0;i<statefield.length()-1;i++)
+                        {
+                            inp+=statefield.charAt(i);
+
+                        }
+
                         for(int i=0;i<state.size();i++)
                         {
+                             if (state.get(i).toLowerCase().endsWith(inp.toLowerCase()))
+                            {
+                                stateout.add(state.get(i));
+
+                            }
 
                         }
 
@@ -278,7 +326,7 @@ class submitelisten implements ActionListener
                     }
           }
 
-
+/*
           String outputstate="";
           for(int g=0;g<stateout.size();g++)
           {
@@ -286,14 +334,21 @@ class submitelisten implements ActionListener
 
           }
         String outputcap="";
-          for(int g=0;g<stateout.size();g++)
+          for(int g=0;g<capout.size();g++)
           {
             outputcap+=capout.get(g)+" ";
 
           }
 
 
-          output.setText("States: "+outputstate+" --- Capitals: "+outputcap);
+          output.setText("States: "+outputstate+" --- Capitals: "+outputcap);*/
+String outtext="";
+        for (int i=0; i<stateout.size();i++)
+        {
+            outtext+="States: "+stateout.get(i)+" --- Capitals: "+data.get(stateout.get(i))+"||||\n";
+
+        }
+output.setText(outtext);
     }
 
 
