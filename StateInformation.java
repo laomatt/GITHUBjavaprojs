@@ -168,40 +168,132 @@ class submitelisten implements ActionListener
           //now we parse out 'state' and 'capoitol' arraylists
           //to match out statefield and capitolfield text
 
-          String stateout="  ";
-          String capout="  ";
-
-          //match state
-          for(int i=0;i<state.size();i++)
-          {
-            if(state.get(i).toLowerCase().contains(statefield.toLowerCase()))
+          ArrayList<String> stateout=new ArrayList<>();
+          ArrayList<String> capout=new ArrayList<>();
+  //   for(int i=0;i<state.size();i++)
+    //      {
+            if(statefield.contains("^")||statefield.contains("#")||statefield.contains("."))
             {
-                    stateout=state.get(i);
-                    break;
+                //see what kind of regex it is
+                if(statefield.contains("^")&&statefield.contains("#")&&statefield.contains("."))
+                    {
+                        for(int i=0;i<state.size();i++)
+                        {
+                        //   find
+
+                        }
+                    }
+                else if((statefield.contains("^")||statefield.contains("#"))&&statefield.contains("."))
+                    {
+                        for(int i=0;i<state.size();i++)
+                        {
+
+                        }
+                    }
+
+                else if(statefield.contains("^"))
+                    {
+                        //now find entries that begin with the string
+                        String inp="";
+                        for(int i=1;i<statefield.length();i++)
+                        {
+                            inp+=statefield.charAt(i);
+
+                        }
+/*
+                        if(inp.contains("^"))
+                        {
+                            stateout.add("wrong regex");
+                            break;
+
+
+                        }*/
+
+                        for(int i=0;i<state.size();i++)
+                        {
+                            if (state.get(i).startsWith(inp,0))
+                            {
+                                stateout.add(state.get(i));
+
+                            }
+
+
+                        }
+
+                    }
+
+                else if(statefield.contains("#"))
+                    {
+                        for(int i=0;i<state.size();i++)
+                        {
+
+                        }
+
+
+                    }
+
+                else
+                {
+
+                       for(int i=0;i<state.size();i++)
+                    {
+
+                            stateout.add("nothing to show");
+                    }
+                   // stateout="works2";
+
+                }
             }
             else
             {
-                    stateout="none found";
+                 //match state
+                for(int i=0;i<state.size();i++)
+                {
+                    if(state.get(i).toLowerCase().contains(statefield.toLowerCase()))
+                    {
+                            stateout.add(state.get(i));
+                            break;
+                    }
+                    else
+                    {
+                            //stateout="none found";
 
+                    }
+                }
             }
-          }
 
+    //      }
           //match capitol
           for(int i=0;i<capital.size();i++)
           {
-            if(capital.get(i).toLowerCase().equalsIgnoreCase(capitolfield.toLowerCase()))
-            {
-                    capout=capital.get(i);
-                    break;
-            }
-                    else
-            {
-                    capout="none found";
+                    if(capital.get(i).toLowerCase().equalsIgnoreCase(capitolfield.toLowerCase()))
+                    {
+                            capout.add(capital.get(i));
+                            break;
+                    }
+                            else
+                    {
+                           // capout="none found";
 
-            }
+                    }
           }
 
-          output.setText(stateout+" : "+capout);
+
+          String outputstate="";
+          for(int g=0;g<stateout.size();g++)
+          {
+            outputstate+=stateout.get(g)+" ";
+
+          }
+        String outputcap="";
+          for(int g=0;g<stateout.size();g++)
+          {
+            outputcap+=capout.get(g)+" ";
+
+          }
+
+
+          output.setText("States: "+outputstate+" --- Capitals: "+outputcap);
     }
 
 
