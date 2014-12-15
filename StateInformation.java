@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
@@ -160,10 +159,6 @@ class submitelisten implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
-//////////////////
-
-////////////////
-
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
           statefield = jtfstate.getText().toString();
@@ -179,7 +174,7 @@ class submitelisten implements ActionListener
           //match state
           for(int i=0;i<state.size();i++)
           {
-            if(state.get(i).equals(statefield))
+            if(state.get(i).toLowerCase().contains(statefield.toLowerCase()))
             {
                     stateout=state.get(i);
                     break;
@@ -194,7 +189,7 @@ class submitelisten implements ActionListener
           //match capitol
           for(int i=0;i<capital.size();i++)
           {
-            if(capital.get(i).equals(capitolfield))
+            if(capital.get(i).toLowerCase().equalsIgnoreCase(capitolfield.toLowerCase()))
             {
                     capout=capital.get(i);
                     break;
@@ -211,4 +206,3 @@ class submitelisten implements ActionListener
 
 
 }
-
