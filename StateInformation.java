@@ -174,7 +174,7 @@ class submitelisten implements ActionListener
             if(statefield.contains("^")||statefield.contains("#")||statefield.contains("."))
             {
                 //see what kind of regex it is
-                if(statefield.contains("^")&&statefield.contains("#")&&statefield.contains("."))
+                if(statefield.startsWith("^")&&statefield.endsWith("#")&&statefield.contains("."))
                     {
 
                         //regex for specified start and end with  variable length middle specified
@@ -243,7 +243,6 @@ class submitelisten implements ActionListener
                                         if ((state.get(i).toLowerCase().startsWith(inp.toLowerCase()))&&(state.get(i).toLowerCase().endsWith(onp.toLowerCase()))&&state.get(i).length()==counter+onp.length()+inp.length())
                                         {
                                             stateout.add(state.get(i));
-                                           // stateout.add(counter+" counts"+onp+inp);
 
                                         }
 
@@ -252,41 +251,28 @@ class submitelisten implements ActionListener
                         }
 
                     }
-                    //regex for specified start or end with middle specified
-                else if((statefield.contains("^")||statefield.contains("#"))&&statefield.contains("."))
 
-                    {
-                         int counter=0;
-                        //count how many '.' there are
+                    //regex for specified start OR end with specified word length
 
-                            for(int i=0; i<statefield.length();i++)
-                                {
-                                        if(statefield.charAt(i)=='.')
-                                        {
-                                            counter++;
-                                        }
-                                }
-
-                        if(statefield.contains("^"))
+                else if(statefield.startsWith("^")&&statefield.endsWith("."))
                         {
                                String inp="";
                                 for(int i=1;i<statefield.indexOf(".");i++)
                                 {
-                                    inp+=statefield.charAt(i);
+                                    inp+=statefield.charAt(i)+"";
 
                                 }
 
                             for(int i=0;i<state.size();i++)
                             {
-
-                                if((state.get(i).startsWith(inp))&&(state.get(i).length()==statefield.length()-1))
+                                if((state.get(i).toLowerCase().startsWith(inp.toLowerCase()))&&(state.get(i).length()==statefield.length()-1))
                                 {
                                         stateout.add(state.get(i));
-
                                 }
                             }
                         }
-                        else if(statefield.contains("#"))
+
+                else if(statefield.endsWith("#")&&statefield.startsWith("."))
                         {
                             String onp="";
                                 for(int i=statefield.lastIndexOf(".")+1;i<statefield.length()-1;i++)
@@ -297,16 +283,31 @@ class submitelisten implements ActionListener
                             for(int i=0;i<state.size();i++)
                             {
 
-                                if((state.get(i).endsWith(onp))&&(state.get(i).length()==statefield.length()-1))
+                                if((state.get(i).toLowerCase().endsWith(onp.toLowerCase()))&&(state.get(i).length()==statefield.length()-1))
                                 {
-
                                         stateout.add(state.get(i));
                                 }
                             }
                         }
-                    }
 
-                else if(statefield.contains("^"))
+                        //regex for specified word length
+                else if(statefield.startsWith(".")&&statefield.endsWith("."))
+                {
+                        for(int i=0;i<state.size();i++)
+                        {
+                            if (state.get(i).length()==statefield.length())
+                            {
+                                stateout.add(state.get(i));
+
+                            }
+
+
+                        }
+
+
+                }
+
+                else if(statefield.startsWith("^"))
                     {
                         //now find entries that begin with the string
                         String inp="";
@@ -329,7 +330,7 @@ class submitelisten implements ActionListener
 
                     }
 
-                else if(statefield.contains("#"))
+                else if(statefield.endsWith("#"))
                     {
                         String onp="";
                         for(int i=0;i<statefield.length()-1;i++)
@@ -380,6 +381,9 @@ class submitelisten implements ActionListener
                     }
                 }
             }
+
+
+
 
           //******//******//******//******//******/    match capitol    /******//******//******//******//******//******/
           for(int i=0;i<capital.size();i++)
