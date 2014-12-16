@@ -78,7 +78,7 @@ JFrame jf;
 
 
         jf = new JFrame("State Capitols");
-        jf.setSize(500, 200);
+        jf.setSize(500, 700);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.setLayout(new GridLayout());
         jf.setLocationRelativeTo(null);
@@ -91,31 +91,34 @@ JFrame jf;
        // con.setPreferredSize(new Dimension(200,400));
 
 
-        JLabel statecap = new JLabel();
-        statecap.setPreferredSize(new Dimension(30,100));
-       // statecap.setAlignmentX(CENTER);
-        //statecap.setBackground(Color.red);
-
-
+        JTextArea statecap = new JTextArea();
+        statecap.setPreferredSize(new Dimension(500,500));
 
         JTextField jtfstate = new JTextField();
-        jtfstate.setPreferredSize(new Dimension(50,20));
+        jtfstate.setPreferredSize(new Dimension(500,20));
 
         JTextField jtfcapitol = new JTextField();
-        jtfcapitol.setPreferredSize(new Dimension(50,20));
+        jtfcapitol.setPreferredSize(new Dimension(500,20));
 
         JPanel textfields = new JPanel();
-        textfields.setPreferredSize(new Dimension(200,50));
+        textfields.setPreferredSize(new Dimension(500,800));
 
 
         submitelisten sl = new submitelisten(jtfstate,jtfcapitol,statecap,st,ca, data);
 
         JButton sub = new JButton("submit");
+        sub.setPreferredSize(new Dimension(500,50));
         sub.addActionListener(sl);
 
-        textfields.setLayout(new GridLayout(4,0));
+        JLabel stateser=new JLabel("search states");
+        JLabel capser=new JLabel("search capitols");
+        JLabel op=new JLabel("output");
+
+        textfields.setLayout(new FlowLayout());
         textfields.add(statecap);
+        textfields.add(stateser);
         textfields.add(jtfstate);
+        textfields.add(capser);
         textfields.add(jtfcapitol);
         textfields.add(sub);
 
@@ -133,12 +136,12 @@ class submitelisten implements ActionListener
 {
         JTextField jtfstate;// = new JTextField();
         JTextField jtfcapitol;// = new JTextField();
-        JLabel output;// = new JPanel();
+        JTextArea output;// = new JPanel();
         ArrayList<String> state = new ArrayList<>();
         ArrayList<String> capital = new ArrayList<>();
         HashMap data = new HashMap<String, String>();
 
-    public submitelisten(JTextField s, JTextField c, JLabel out, ArrayList st, ArrayList ca, HashMap da)
+    public submitelisten(JTextField s, JTextField c, JTextArea out, ArrayList st, ArrayList ca, HashMap da)
     {
 
         data=da;
@@ -167,17 +170,17 @@ class submitelisten implements ActionListener
 
           ArrayList<String> stateout=new ArrayList<>();
           ArrayList<String> capout=new ArrayList<>();
-  //   for(int i=0;i<state.size();i++)
-    //      {
+
             if(statefield.contains("^")||statefield.contains("#")||statefield.contains("."))
             {
                 //see what kind of regex it is
                 if(statefield.contains("^")&&statefield.contains("#")&&statefield.contains("."))
                     {
-                        //regex for specified start and end with middle specified
-                        if(statefield.contains("*"))
+
+                        //regex for specified start and end with  variable length middle specified
+                        if(statefield.contains(".*"))
                         {
-                            //get string for the start of the search criteria
+                                                    //get string for the start of the search criteria
                             String inp="";
                                 for(int i=1;i<statefield.indexOf(".");i++)
                                 {
@@ -186,11 +189,12 @@ class submitelisten implements ActionListener
                                 }
                             //get string for the end of the search criteria
                             String onp="";
-                                for(int i=statefield.indexOf("*")+1;i<statefield.length();i++)
+                                for(int i=statefield.indexOf("*")+1;i<statefield.length()-1;i++)
                                 {
-                                    inp+=statefield.charAt(i);
+                                    onp+=statefield.charAt(i);
 
                                 }
+
 
                                 //now transverse the array list to filter out what starts with inp and ends with onp
                             for(int i=0;i<state.size();i++)
@@ -203,27 +207,102 @@ class submitelisten implements ActionListener
 
                             }
                         }
-                        else
+                        //regex for specified start and end with  specific length middle specified
+                        else if(!statefield.contains("*"))
                         {
-                            int counter=0;
-                            for(int i=0; i<statefield.length;i++)
-                            {
-                                    if(statefield.charAt(i).equalsIgnoreCase("."))
-                                    {
-                                        counter++;
-                                    }
+                                int counter=0;
+                        //count how many '.' there are
 
-                            }
+                            for(int i=0; i<statefield.length();i++)
+                                {
+                                        if(statefield.charAt(i)=='.')
+                                        {
+                                            counter++;
+                                        }
+                                }
 
+
+                        //get string for the start of the search criteria
+                            String inp="";
+                                for(int i=1;i<statefield.indexOf(".");i++)
+                                {
+                                    inp+=statefield.charAt(i);
+
+                                }
+
+                        //get string for the end of the search criteria
+                            String onp="";
+                                for(int i=statefield.lastIndexOf(".")+1;i<statefield.length()-1;i++)
+                                {
+                                    onp+=statefield.charAt(i);
+
+                                }
+
+                                for(int i=0;i<state.size();i++)
+                                {
+                                        if ((state.get(i).toLowerCase().startsWith(inp.toLowerCase()))&&(state.get(i).toLowerCase().endsWith(onp.toLowerCase()))&&state.get(i).length()==counter+onp.length()+inp.length())
+                                        {
+                                            stateout.add(state.get(i));
+                                           // stateout.add(counter+" counts"+onp+inp);
+
+                                        }
+
+                                }
 
                         }
+
                     }
                     //regex for specified start or end with middle specified
                 else if((statefield.contains("^")||statefield.contains("#"))&&statefield.contains("."))
-                    {
-                        for(int i=0;i<state.size();i++)
-                        {
 
+                    {
+                         int counter=0;
+                        //count how many '.' there are
+
+                            for(int i=0; i<statefield.length();i++)
+                                {
+                                        if(statefield.charAt(i)=='.')
+                                        {
+                                            counter++;
+                                        }
+                                }
+
+                        if(statefield.contains("^"))
+                        {
+                               String inp="";
+                                for(int i=1;i<statefield.indexOf(".");i++)
+                                {
+                                    inp+=statefield.charAt(i);
+
+                                }
+
+                            for(int i=0;i<state.size();i++)
+                            {
+
+                                if((state.get(i).startsWith(inp))&&(state.get(i).length()==statefield.length()-1))
+                                {
+                                        stateout.add(state.get(i));
+
+                                }
+                            }
+                        }
+                        else if(statefield.contains("#"))
+                        {
+                            String onp="";
+                                for(int i=statefield.lastIndexOf(".")+1;i<statefield.length()-1;i++)
+                                {
+                                    onp+=statefield.charAt(i);
+
+                                }
+                            for(int i=0;i<state.size();i++)
+                            {
+
+                                if((state.get(i).endsWith(onp))&&(state.get(i).length()==statefield.length()-1))
+                                {
+
+                                        stateout.add(state.get(i));
+                                }
+                            }
                         }
                     }
 
@@ -236,14 +315,6 @@ class submitelisten implements ActionListener
                             inp+=statefield.charAt(i);
 
                         }
-/*
-                        if(inp.contains("^"))
-                        {
-                            stateout.add("wrong regex");
-                            break;
-
-
-                        }*/
 
                         for(int i=0;i<state.size();i++)
                         {
@@ -260,16 +331,16 @@ class submitelisten implements ActionListener
 
                 else if(statefield.contains("#"))
                     {
-                        String inp="";
+                        String onp="";
                         for(int i=0;i<statefield.length()-1;i++)
                         {
-                            inp+=statefield.charAt(i);
+                            onp+=statefield.charAt(i);
 
                         }
 
                         for(int i=0;i<state.size();i++)
                         {
-                             if (state.get(i).toLowerCase().endsWith(inp.toLowerCase()))
+                             if (state.get(i).toLowerCase().endsWith(onp.toLowerCase()))
                             {
                                 stateout.add(state.get(i));
 
@@ -310,8 +381,7 @@ class submitelisten implements ActionListener
                 }
             }
 
-    //      }
-          //match capitol
+          //******//******//******//******//******/    match capitol    /******//******//******//******//******//******/
           for(int i=0;i<capital.size();i++)
           {
                     if(capital.get(i).toLowerCase().equalsIgnoreCase(capitolfield.toLowerCase()))
@@ -326,26 +396,11 @@ class submitelisten implements ActionListener
                     }
           }
 
-/*
-          String outputstate="";
-          for(int g=0;g<stateout.size();g++)
-          {
-            outputstate+=stateout.get(g)+" ";
 
-          }
-        String outputcap="";
-          for(int g=0;g<capout.size();g++)
-          {
-            outputcap+=capout.get(g)+" ";
-
-          }
-
-
-          output.setText("States: "+outputstate+" --- Capitals: "+outputcap);*/
 String outtext="";
         for (int i=0; i<stateout.size();i++)
         {
-            outtext+="States: "+stateout.get(i)+" --- Capitals: "+data.get(stateout.get(i))+"||||\n";
+            outtext+="State: "+stateout.get(i)+" --- Capital: "+data.get(stateout.get(i))+"\n";
 
         }
 output.setText(outtext);
