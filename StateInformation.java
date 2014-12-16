@@ -1,3 +1,11 @@
+/*
+Author: Matt Lao
+Class: 211s
+Date: 12/15/14
+Title: State Info
+Description: takes input from two text fields, and searches as regular expressions matches for states and capitols.
+*/
+
 import java.awt.*;
 import java.awt.BorderLayout;
 import static java.awt.BorderLayout.CENTER;
@@ -11,19 +19,9 @@ import java.util.HashMap;
 import java.util.Scanner;
 import javax.swing.*;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author mattlao
- */
 public class StateInformation extends JFrame{
 
-
+/********************the main method for the setup operations******************************/
     public static void main(String[] args) throws FileNotFoundException
     {
         HashMap data = new HashMap<String, String>();
@@ -76,20 +74,12 @@ JFrame jf;
     {
        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 
-
         jf = new JFrame("State Capitols");
         jf.setSize(500, 700);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.setLayout(new GridLayout());
         jf.setLocationRelativeTo(null);
         jf.setResizable(true);
-           // jf.add(con);
-
-
-        //Container con = jf.getContentPane();
-       // con.setLayout(new GridLayout(2,0));
-       // con.setPreferredSize(new Dimension(200,400));
-
 
         JTextArea statecap = new JTextArea();
         statecap.setPreferredSize(new Dimension(500,500));
@@ -131,7 +121,7 @@ JFrame jf;
     }
 }
 
-
+/********************************* My listener class which contains my search algorithm*********************************************************/
 class submitelisten implements ActionListener
 {
         JTextField jtfstate;// = new JTextField();
@@ -141,6 +131,7 @@ class submitelisten implements ActionListener
         ArrayList<String> capital = new ArrayList<>();
         HashMap data = new HashMap<String, String>();
 
+/***************************************** the main method for the search algorithm  ***********************************************************/
     public submitelisten(JTextField s, JTextField c, JTextArea out, ArrayList st, ArrayList ca, HashMap da)
     {
 
@@ -170,7 +161,7 @@ class submitelisten implements ActionListener
 
           ArrayList<String> stateout=new ArrayList<>();
           ArrayList<String> capout=new ArrayList<>();
-
+    //******//******//******//******//******/    match state    /******//******//******//******//******//******/
             if(statefield.contains("^")||statefield.contains("#")||statefield.contains("."))
             {
                 //see what kind of regex it is
@@ -386,27 +377,240 @@ class submitelisten implements ActionListener
 
 
           //******//******//******//******//******/    match capitol    /******//******//******//******//******//******/
-          for(int i=0;i<capital.size();i++)
-          {
-                    if(capital.get(i).toLowerCase().equalsIgnoreCase(capitolfield.toLowerCase()))
+         if(capitolfield.contains("^")||capitolfield.contains("#")||capitolfield.contains("."))
+            {
+                //see what kind of regex it is
+                if(capitolfield.startsWith("^")&&capitolfield.endsWith("#")&&capitolfield.contains("."))
+                    {
+
+                        //regex for specified start and end with  variable length middle specified
+                        if(capitolfield.contains(".*"))
+                        {
+                                                    //get string for the start of the search criteria
+                            String inp="";
+                                for(int i=1;i<capitolfield.indexOf(".");i++)
+                                {
+                                    inp+=capitolfield.charAt(i);
+
+                                }
+                            //get string for the end of the search criteria
+                            String onp="";
+                                for(int i=capitolfield.indexOf("*")+1;i<capitolfield.length()-1;i++)
+                                {
+                                    onp+=capitolfield.charAt(i);
+
+                                }
+
+
+                                //now transverse the array list to filter out what starts with inp and ends with onp
+                            for(int i=0;i<capital.size();i++)
+                            {
+                                    if (capital.get(i).toLowerCase().startsWith(inp.toLowerCase())&&capital.get(i).toLowerCase().endsWith(onp.toLowerCase()))
+                                    {
+                                        capout.add(capital.get(i));
+
+                                    }
+
+                            }
+                        }
+                        //regex for specified start and end with  specific length middle specified
+                        else if(!capitolfield.contains("*"))
+                        {
+                                int counter=0;
+                        //count how many '.' there are
+
+                            for(int i=0; i<capitolfield.length();i++)
+                                {
+                                        if(capitolfield.charAt(i)=='.')
+                                        {
+                                            counter++;
+                                        }
+                                }
+
+
+                        //get string for the start of the search criteria
+                            String inp="";
+                                for(int i=1;i<capitolfield.indexOf(".");i++)
+                                {
+                                    inp+=capitolfield.charAt(i);
+
+                                }
+
+                        //get string for the end of the search criteria
+                            String onp="";
+                                for(int i=capitolfield.lastIndexOf(".")+1;i<capitolfield.length()-1;i++)
+                                {
+                                    onp+=capitolfield.charAt(i);
+
+                                }
+
+                                for(int i=0;i<capital.size();i++)
+                                {
+                                        if ((capital.get(i).toLowerCase().startsWith(inp.toLowerCase()))&&(capital.get(i).toLowerCase().endsWith(onp.toLowerCase()))&&capital.get(i).length()==counter+onp.length()+inp.length())
+                                        {
+                                            capout.add(capital.get(i));
+
+                                        }
+
+                                }
+
+                        }
+
+                    }
+
+                    //regex for specified start OR end with specified word length
+
+                else if(capitolfield.startsWith("^")&&capitolfield.endsWith("."))
+                        {
+                               String inp="";
+                                for(int i=1;i<capitolfield.indexOf(".");i++)
+                                {
+                                    inp+=capitolfield.charAt(i)+"";
+
+                                }
+
+                            for(int i=0;i<capital.size();i++)
+                            {
+                                if((capital.get(i).toLowerCase().startsWith(inp.toLowerCase()))&&(capital.get(i).length()==capitolfield.length()-1))
+                                {
+                                        capout.add(capital.get(i));
+                                }
+                            }
+                        }
+
+                else if(capitolfield.endsWith("#")&&capitolfield.startsWith("."))
+                        {
+                            String onp="";
+                                for(int i=capitolfield.lastIndexOf(".")+1;i<capitolfield.length()-1;i++)
+                                {
+                                    onp+=capitolfield.charAt(i);
+
+                                }
+                            for(int i=0;i<capital.size();i++)
+                            {
+
+                                if((capital.get(i).toLowerCase().endsWith(onp.toLowerCase()))&&(capital.get(i).length()==capitolfield.length()-1))
+                                {
+                                        capout.add(capital.get(i));
+                                }
+                            }
+                        }
+
+                        //regex for specified word length
+                else if(capitolfield.startsWith(".")&&capitolfield.endsWith("."))
+                {
+                        for(int i=0;i<capital.size();i++)
+                        {
+                            if (capital.get(i).length()==capitolfield.length())
+                            {
+                                capout.add(capital.get(i));
+
+                            }
+
+
+                        }
+
+
+                }
+
+                else if(capitolfield.startsWith("^"))
+                    {
+                        //now find entries that begin with the string
+                        String inp="";
+                        for(int i=1;i<capitolfield.length();i++)
+                        {
+                            inp+=capitolfield.charAt(i);
+
+                        }
+
+                        for(int i=0;i<capital.size();i++)
+                        {
+                            if (capital.get(i).toLowerCase().startsWith(inp.toLowerCase()))
+                            {
+                                capout.add(capital.get(i));
+
+                            }
+
+
+                        }
+
+                    }
+
+                else if(capitolfield.endsWith("#"))
+                    {
+                        String onp="";
+                        for(int i=0;i<capitolfield.length()-1;i++)
+                        {
+                            onp+=capitolfield.charAt(i);
+
+                        }
+
+                        for(int i=0;i<capital.size();i++)
+                        {
+                             if (capital.get(i).toLowerCase().endsWith(onp.toLowerCase()))
+                            {
+                                capout.add(capital.get(i));
+
+                            }
+
+                        }
+
+
+                    }
+
+                else
+                {
+
+                       for(int i=0;i<capital.size();i++)
+                    {
+
+                            capout.add("nothing to show");
+                    }
+                   // capout="works2";
+
+                }
+            }
+            else
+            {
+                 //match capital
+                for(int i=0;i<capital.size();i++)
+                {
+                    if(capital.get(i).toLowerCase().contains(capitolfield.toLowerCase()))
                     {
                             capout.add(capital.get(i));
                             break;
                     }
-                            else
+                    else
                     {
-                           // capout="none found";
+                            //capout="none found";
 
                     }
-          }
+                }
+            }
 
 
+
+/****************************** code for the output textarea box ******************************************/
 String outtext="";
+outtext+="-------------State search matches:------------- \n";
         for (int i=0; i<stateout.size();i++)
         {
+
+
             outtext+="State: "+stateout.get(i)+" --- Capital: "+data.get(stateout.get(i))+"\n";
 
         }
+
+outtext+="\n";
+outtext+="\n";
+
+outtext+="-------------Capital search matches:------------- \n";
+        for (int i=0; i<stateout.size();i++)
+        {
+            outtext+="Capital: "+capout.get(i)+" --- State: "+state.get(capital.indexOf(capout.get(i)))+"\n";
+
+        }
+
 output.setText(outtext);
     }
 
