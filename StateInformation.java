@@ -605,7 +605,7 @@ outtext+="\n";
 outtext+="\n";
 
 outtext+="-------------Capital search matches:------------- \n";
-        for (int i=0; i<stateout.size();i++)
+        for (int i=0; i<capout.size();i++)
         {
             outtext+="Capital: "+capout.get(i)+" --- State: "+state.get(capital.indexOf(capout.get(i)))+"\n";
 
